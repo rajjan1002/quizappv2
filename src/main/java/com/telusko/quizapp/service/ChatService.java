@@ -5,8 +5,9 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +21,10 @@ public class ChatService {
 
     @Autowired
     private OpenAiChatModel chatModel;
-
+    @Cacheable(
+            value = "chatResponses",
+            key = "#request.documentId + '-' + #request.question.trim().toLowerCase()"
+    )
     public ChatResponse askQuestion(ChatRequest request) {
 
         // Retrieve only the chunks belonging to the selected document
@@ -33,11 +37,11 @@ public class ChatService {
         );
 
         // No matching chunks found
-        if (documents == null || documents.isEmpty()) {
-            return new ChatResponse(
-                    "I couldn't find any relevant information in the uploaded PDF."
-            );
-        }
+//        if (documents == null || documents.isEmpty()) {
+//            return new ChatResponse(
+//                    "I couldn't find any relevant information in the uploaded PDF."
+//            );
+//        }
 
         // Merge retrieved chunks into one context
         String context = documents.stream()
@@ -94,6 +98,7 @@ public class ChatService {
                 """.formatted(context, request.getQuestion());
 
         // Call GPT
+        System.out.println("Calling OpenAI...");
         String answer = chatModel.call(new Prompt(prompt))
                 .getResult()
                 .getOutput()

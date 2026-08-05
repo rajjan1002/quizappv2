@@ -36,7 +36,7 @@ public class QuizService {
     public List<QuestionWrapper> getQuizQuestions(Integer id) {
         Optional<Quiz> quiz = quizDao.findById(id);
         List<Question> questionsFromDB = quiz.get().getQuestions();  //when we are dealing with Optional var then we need to access it by get.get
-        // now to questions we get from DB needs to be converted to questionWrapper in order to send to client/ user
+        // now   questions we get from DB needs to be converted to questionWrapper in order to send to client/ user
         // so we had to manually loop and convert list of questions to list of questionWrapper
         List<QuestionWrapper> questionsForUser = new ArrayList<>();
         for (Question ques : questionsFromDB) {

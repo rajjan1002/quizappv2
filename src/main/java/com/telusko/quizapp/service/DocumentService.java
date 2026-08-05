@@ -6,6 +6,7 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +24,10 @@ public class DocumentService {
 
     @Autowired
     private EmbeddingService embeddingService;
-
+    @CacheEvict(
+            value = "chatResponses",
+            allEntries = true
+    )
     public Document uploadPdf(MultipartFile file) throws IOException {
 
         // Load PDF

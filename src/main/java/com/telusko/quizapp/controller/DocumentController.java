@@ -21,7 +21,6 @@ public class DocumentController {
     public ResponseEntity<Document> uploadPdf(
             @RequestParam("file") MultipartFile file
     ) throws IOException {
-
         Document savedDocument = documentService.uploadPdf(file);
 
         return ResponseEntity.ok(savedDocument);
